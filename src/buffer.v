@@ -4,13 +4,13 @@ module input_buffer #(
     parameter FLIT_SIZE    = 40,
     parameter BUFFER_DEPTH = 8
 )(
-    input  wire clk,
-    input  wire rst,
+    input wire clk,
+    input wire rst,
     // Write port
-    input  wire wr_en,
-    input  wire [FLIT_SIZE-1:0] flit_in,
+    input wire wr_en,
+    input wire [FLIT_SIZE-1:0] flit_in,
     // Read port
-    input  wire rd_en,
+    input wire rd_en,
     output wire [FLIT_SIZE-1:0] flit_out,
     // Status signals
     output wire full,
