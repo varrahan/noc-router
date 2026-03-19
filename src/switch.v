@@ -1,3 +1,5 @@
+`timescale 1ns/1ps
+
 module switch #(
     parameter FLIT_SIZE = 40,
     parameter NUM_PORTS = 5
