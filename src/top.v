@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module noc_router_top #(
+module top #(
     parameter DATA_WIDTH   = 32,
     parameter COORD_W      = 4,
     parameter FLIT_SIZE    = 40,

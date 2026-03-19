@@ -5,7 +5,7 @@ module input_buffer #(
     parameter BUFFER_DEPTH = 8
 )(
     input wire clk,
-    input wire rst,
+    input wire rst_n,
     // Write port
     input wire wr_en,
     input wire [FLIT_SIZE-1:0] flit_in,
