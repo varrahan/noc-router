@@ -36,5 +36,29 @@ module input_buffer #(
                    (wr_ptr[ADDR_W-1:0] == rd_ptr[ADDR_W-1:0]);
     assign empty = (wr_ptr == rd_ptr);
 
+    // Write logic
+    always @(posedge clk) begin
+        if (wr_en && !full)
+            mem[wr_addr] <= flit_in;
+    end
+
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            wr_ptr <= {(ADDR_W+1){1'b0}};
+        else if (wr_en && !full)
+            wr_ptr <= wr_ptr + 1'b1;
+    end
+
+    // Read logic
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            rd_ptr <= {(ADDR_W+1){1'b0}};
+        else if (rd_en && !empty)
+            rd_ptr <= rd_ptr + 1'b1;
+    end
+
+    assign flit_out = mem[rd_addr];
+    assign valid_head = !empty && flit_out[FLIT_SIZE-2];
+    assign credit_out = rd_en && !empty;
 
 endmodule
