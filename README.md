@@ -1,4 +1,4 @@
-# Parameterized Network-on-Chip (NoC) Router
+# Network-on-Chip Router
 
 A 5-port NoC router implementing wormhole switching,
 X-Y deterministic routing, credit-based virtual channel flow control, and round-robin
