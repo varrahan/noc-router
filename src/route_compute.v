@@ -7,15 +7,15 @@ module route_compute #(
     parameter ROUTER_Y   = 0
 )(
     // Head flit to evaluate
-    input  wire [FLIT_SIZE-1:0]  head_flit,
-    input  wire                  head_valid,
+    input wire [FLIT_SIZE-1:0] head_flit,
+    input wire head_valid,
     // Computed output port
-    output reg  [4:0]            out_port
+    output reg [4:0]  out_port
 );
 
     // Flit field extraction
-    wire [COORD_W-1:0] dest_x = head_flit[FLIT_SIZE-4           -: COORD_W];
-    wire [COORD_W-1:0] dest_y = head_flit[FLIT_SIZE-4-COORD_W   -: COORD_W];
+    wire [COORD_W-1:0] dest_x = head_flit[FLIT_SIZE-4 -: COORD_W];
+    wire [COORD_W-1:0] dest_y = head_flit[FLIT_SIZE-4-COORD_W -: COORD_W];
 
     // X-Y routing decision
     localparam LOCAL = 5'b00001;
