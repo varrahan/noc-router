@@ -32,22 +32,22 @@ Prerequisites: `iverilog`, `vvp`, `gtkwave` on your PATH.
 ## Architecture Overview
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                      noc_router_top                              │
-│                                                                  │
-│  ┌──────────┐   ┌─────────┐   ┌──────────┐   ┌─────────────┐   │
-│  │  Input   │   │  Route  │   │    VC    │   │   Switch    │   │
-│  │  Buffer  │──▶│Compute  │──▶│Allocator │──▶│  Allocator  │   │
-│  │  (FIFO)  │   │  (X-Y)  │   │ (RR/VC) │   │  (RR/Port)  │   │
-│  └──────────┘   └─────────┘   └──────────┘   └──────┬──────┘   │
+┌─────────────────────────────────────────────────────────────────┐
+│                      noc_router_top                             │
+│                                                                 │
+│  ┌──────────┐   ┌─────────┐   ┌──────────┐   ┌──────────────┐   │
+│  │  Input   │   │  Route  │   │    VC    │   │   Switch     │   │
+│  │  Buffer  │──>│Compute  │──>│Allocator │──>│  Allocator   │   │
+│  │  (FIFO)  │   │  (X-Y)  │   │ (RR/VC)  │   │  (RR/Port)   │   │
+│  └──────────┘   └─────────┘   └──────────┘   └───────┬──────┘   │
 │  (per port,                                          │          │
 │   per VC)                                    ┌───────▼──────┐   │
 │                                              │   Crossbar   │   │
 │                                              │   Switch     │   │
 │                                              └───────┬──────┘   │
 │                                                      │          │
-│  Credits ◀──────────────────────────────────────────┘          │
-└──────────────────────────────────────────────────────────────────┘
+│  Credits <───────────────────────────────────────────┘          │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ### 5-port layout in a 2D mesh
@@ -55,11 +55,11 @@ Prerequisites: `iverilog`, `vvp`, `gtkwave` on your PATH.
 ```
          NORTH (port 1)
               │
-WEST (4) ─── ● ─── EAST (3)
+WEST (4) ───  ● ─── EAST (3)
               │
          SOUTH (port 2)
               │
-          LOCAL (0)   ←→  Processing Element
+          LOCAL (0)  <->  Processing Element
 ```
 
 ### Pipeline (4–5 cycles per flit)
@@ -103,8 +103,8 @@ noc_router_project/
 | Parameter    | Default | Range / Notes                          |
 |--------------|---------|----------------------------------------|
 | DATA_WIDTH   | 32      | 8 / 32 / 64 / 128 bits                 |
-| COORD_W      | 4       | Supports grids up to 16×16            |
-| FLIT_SIZE    | 40      | Must satisfy: ≥ 3 + 2×COORD_W + 1    |
+| COORD_W      | 4       | Supports grids up to 16×16             |
+| FLIT_SIZE    | 40      | Must satisfy: >= 3 + 2×COORD_W + 1      |
 | BUFFER_DEPTH | 8       | Must be a power of 2                   |
 | NUM_VCS      | 2       | 1–4 VCs per physical port              |
 | ROUTER_X_ID  | 0       | Static X coordinate in the mesh        |
@@ -127,8 +127,8 @@ noc_router_top #(
 
 ## Test Cases
 
-| TC  | Description                                      |
-|-----|--------------------------------------------------|
+| TC  | Description                                     |
+|-----|-------------------------------------------------|
 | TC1 | LOCAL → EAST (positive X routing)               |
 | TC2 | LOCAL → WEST (negative X routing)               |
 | TC3 | LOCAL → SOUTH (Y routing, positive)             |
