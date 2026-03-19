@@ -33,19 +33,17 @@ Prerequisites: `iverilog`, `vvp`, `gtkwave` on your PATH.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                      noc_router_top                             │
+│                             top                                 │
 │                                                                 │
 │  ┌──────────┐   ┌─────────┐   ┌──────────┐   ┌──────────────┐   │
-│  │  Input   │   │  Route  │   │    VC    │   │   Switch     │   │
-│  │  Buffer  │──>│Compute  │──>│Allocator │──>│  Allocator   │   │
-│  │  (FIFO)  │   │  (X-Y)  │   │ (RR/VC)  │   │  (RR/Port)   │   │
+│  │  Buffer  │   │  Route  │   │    VC    │   │   Switch     │   │
+│  │  (FIFO)  │──>│Compute  │──>│Allocator │──>│  Allocator   │   │
+│  │          │   │  (X-Y)  │   │ (RR/VC)  │   │  (RR/Port)   │   │
 │  └──────────┘   └─────────┘   └──────────┘   └───────┬──────┘   │
 │  (per port,                                          │          │
 │   per VC)                                    ┌───────▼──────┐   │
-│                                              │   Crossbar   │   │
-│                                              │   Switch     │   │
+│                                              │    Switch    │   │
 │                                              └───────┬──────┘   │
-│                                                      │          │
 │  Credits <───────────────────────────────────────────┘          │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -77,22 +75,19 @@ WEST (4) ───  ● ─── EAST (3)
 ## File Structure
 
 ```
-noc_router_project/
+noc_router/
 ├── src/
-│   ├── noc_router_top.v      Top-level integration
-│   ├── input_buffer.v        Parameterized FIFO (per port, per VC)
+│   ├── top.v                 Top-level integration
+│   ├── buffer.v              Parameterized FIFO (per port, per VC)
 │   ├── route_compute.v       X-Y routing (combinational)
 │   ├── vc_allocator.v        Downstream VC assignment (round-robin)
 │   ├── switch_allocator.v    Crossbar arbitration (round-robin)
-│   └── crossbar_switch.v     Physical multiplexing fabric
+│   └── switch.v              Physical multiplexing fabric
 ├── tb/
 │   ├── router_tb.v           Main testbench (10 test cases)
 │   └── traffic_gen.v         LFSR-based flit generator
 ├── scripts/
 │   └── Makefile
-├── docs/
-│   ├── register_map.md       Flit format, port map, parameters
-│   └── architecture_diagram.png
 └── README.md
 ```
 
@@ -104,7 +99,7 @@ noc_router_project/
 |--------------|---------|----------------------------------------|
 | DATA_WIDTH   | 32      | 8 / 32 / 64 / 128 bits                 |
 | COORD_W      | 4       | Supports grids up to 16×16             |
-| FLIT_SIZE    | 40      | Must satisfy: >= 3 + 2×COORD_W + 1      |
+| FLIT_SIZE    | 40      | Must satisfy: >= 3 + 2×COORD_W + 1     |
 | BUFFER_DEPTH | 8       | Must be a power of 2                   |
 | NUM_VCS      | 2       | 1–4 VCs per physical port              |
 | ROUTER_X_ID  | 0       | Static X coordinate in the mesh        |
@@ -113,7 +108,7 @@ noc_router_project/
 Override at instantiation:
 
 ```verilog
-noc_router_top #(
+top #(
     .DATA_WIDTH   (64),
     .FLIT_SIZE    (80),
     .BUFFER_DEPTH (16),
